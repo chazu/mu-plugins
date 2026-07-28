@@ -28,10 +28,9 @@ for name in "${plugins[@]}"; do
   fi
 done
 
-# envsecret is the one source-only Go plugin. mu's generic scenario runner
-# currently discovers Babashka or prebuilt executable entrypoints, so exercise
-# this package through its source entrypoint until Go-plugin package builds land.
+# envsecret is the one source-only Go plugin. Exercise its nested module
+# directly so the contract job verifies the package build boundary as well.
 printf '%s\n' '{"method":"discover"}' \
-  | (cd "$root_dir" && go run ./plugins/envsecret) \
+  | (cd "$root_dir/plugins/envsecret" && go run .) \
   | grep -q '"name":"env"'
 echo "envsecret discover passed"
