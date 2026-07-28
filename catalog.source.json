@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "chazu/mu-plugins",
-  "release_tag": "catalog-v0.1.0",
+  "release_tag": "catalog-v0.1.1",
   "plugins": [
     {
       "name": "aws",
