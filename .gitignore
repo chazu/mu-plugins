@@ -1,0 +1,12 @@
+# mu local state and extracted/cache artifacts
+.mu/
+/mu
+*-plugin.bb
+
+# Go build output for the source-only Go plugin.
+plugins/envsecret/envsecret
+
+# Editor and OS noise
+.DS_Store
+.idea/
+.vscode/
