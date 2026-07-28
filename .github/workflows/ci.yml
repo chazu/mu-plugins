@@ -39,7 +39,7 @@ jobs:
         run: |
           version=1.12.216
           url="https://github.com/babashka/babashka/releases/download/v${version}/babashka-${version}-linux-amd64-static.tar.gz"
-          sha256=3e85859b30f18a2dcccdc80453a8a3f811254f953c70dfbc0b731a2fb8476ba3920b2d6e6b6580795a8cf1698aa124733bb26065bb10956842272caf8e5299ae
+          sha256=3e85859b30f18a2dcccdc80453a8a3f811254f953c70dfbc0b731a2fb8476ba3
           archive="$(mktemp)"
           curl --fail --silent --show-error --location "$url" \
             --output "$archive"
