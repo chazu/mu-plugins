@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "repository": "chazu/mu-plugins",
+  "release_tag": "catalog-v0.1.0",
+  "plugins": [
+    {
+      "name": "aws",
+      "version": "0.1.0",
+      "description": "AWS EC2, VPC, and subnet observer",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["aws-cli >= 2"],
+      "schemas": [{"module": "mu/aws", "version": "v1", "path": "schemas/mu/aws"}],
+      "pudl_mappings": [
+        {"resource_type": "aws.ec2.instance", "schema": "pudl/aws.#Instance"},
+        {"resource_type": "aws.ec2.vpc", "schema": "pudl/aws.#VPC"},
+        {"resource_type": "aws.ec2.subnet", "schema": "pudl/aws.#Subnet"}
+      ]
+    },
+    {
+      "name": "cowsay",
+      "version": "0.1.0",
+      "description": "Demo text transformation",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "docker",
+      "version": "0.1.0",
+      "description": "Docker image builder",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["docker"]
+    },
+    {
+      "name": "envsecret",
+      "version": "0.1.0",
+      "description": "Read-only environment secret provider",
+      "entrypoint": "envsecret",
+      "requirements": ["go >= 1.26"],
+      "build": {"command": ["go", "build", "-o", "envsecret", "."], "sources": ["main.go"]}
+    },
+    {
+      "name": "file",
+      "version": "0.2.0",
+      "description": "File convergence with sealed-output capture",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "go",
+      "version": "0.1.0",
+      "description": "Go build toolchain",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["go"]
+    },
+    {
+      "name": "host",
+      "version": "0.1.0",
+      "description": "Remote host observer over SSH",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["ssh"]
+    },
+    {
+      "name": "k8s",
+      "version": "0.3.0",
+      "description": "Kubernetes convergence, drift, and Secret capture",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["kubectl"]
+    },
+    {
+      "name": "keypair-gen",
+      "version": "0.1.0",
+      "description": "Ed25519 and ECDSA keypair generator",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "lint",
+      "version": "0.1.0",
+      "description": "Linter wrapper",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "pass",
+      "version": "0.3.0",
+      "description": "Bidirectional pass secret provider",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["pass"]
+    },
+    {
+      "name": "remote-exec",
+      "version": "0.2.0",
+      "description": "Remote SSH command execution",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["ssh"]
+    },
+    {
+      "name": "remote-file",
+      "version": "0.1.0",
+      "description": "Remote file convergence over SSH",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["ssh"]
+    },
+    {
+      "name": "scratch",
+      "version": "0.1.0",
+      "description": "Toolchain bootstrap helper",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "sops",
+      "version": "0.1.0",
+      "description": "Bidirectional SOPS secret provider",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["sops"]
+    },
+    {
+      "name": "terraform",
+      "version": "0.2.0",
+      "description": "Terraform planning, apply, and drift observation",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["terraform"]
+    },
+    {
+      "name": "void",
+      "version": "0.1.0",
+      "description": "Build webhook reporter",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb"
+    },
+    {
+      "name": "zig",
+      "version": "0.1.0",
+      "description": "Zig build toolchain",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["zig"]
+    }
+  ]
+}

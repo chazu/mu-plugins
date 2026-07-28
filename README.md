@@ -63,3 +63,26 @@ MU_AWS_FIXTURE=1 \
   PATH="$PWD/plugins/aws/testdata/bin:$PATH" \
   mu plugin test plugins/aws
 ```
+
+## Catalog and releases
+
+`catalog.source.json` is the hand-authored metadata source. The generator
+validates every package manifest, checks plugin versions against their
+discover source, creates deterministic source archives, and writes the
+generated [`catalog.json`](catalog.json).
+
+Regenerate it locally with:
+
+```bash
+tmp_dir="$(mktemp -d)"
+go run ./cmd/catalog \
+  --source catalog.source.json \
+  --output catalog.json \
+  --assets-dir "$tmp_dir" \
+  --release-tag catalog-v0.1.0
+```
+
+Pushing a `catalog-v*` tag runs the release workflow. It uploads
+`catalog.json`, `SHA256SUMS`, and one immutable `<plugin>-<version>.tar.gz`
+source asset per package. The catalog records the release URL and hash that a
+future `mu plugin install` implementation will verify.

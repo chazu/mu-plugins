@@ -1,0 +1,55 @@
+---
+name: CI
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Go checks
+        run: |
+          go test ./...
+          go vet ./...
+          go build ./...
+      - name: Catalog reproducibility
+        run: bash scripts/check-catalog.sh
+
+  plugin-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Install Babashka
+        shell: bash
+        run: |
+          version=1.12.216
+          url="https://github.com/babashka/babashka/releases/download/v${version}/babashka-${version}-linux-amd64-static.tar.gz"
+          sha256=3e85859b30f18a2dcccdc80453a8a3f811254f953c70dfbc0b731a2fb8476ba3920b2d6e6b6580795a8cf1698aa124733bb26065bb10956842272caf8e5299ae
+          archive="$(mktemp)"
+          curl --fail --silent --show-error --location "$url" \
+            --output "$archive"
+          echo "$sha256  $archive" | sha256sum --check --status
+          mkdir -p "$HOME/.mu/toolchains/bb"
+          tar -xzf "$archive" -C "$HOME/.mu/toolchains/bb"
+          chmod +x "$HOME/.mu/toolchains/bb/bb"
+      - name: Install mu
+        run: |
+          go install github.com/chazu/mu/cmd/mu@v0.3.4
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Plugin discovery and fixtures
+        run: bash scripts/test-plugins.sh

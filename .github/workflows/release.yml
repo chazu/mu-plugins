@@ -1,0 +1,47 @@
+---
+name: Release plugin catalog
+
+"on":
+  push:
+    tags:
+      - "catalog-v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example catalog-v0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build deterministic catalog assets
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          mkdir -p dist
+          go run ./cmd/catalog \
+            --source catalog.source.json \
+            --output dist/catalog.json \
+            --assets-dir dist \
+            --release-tag "$RELEASE_TAG"
+          sha256sum dist/*.tar.gz > dist/SHA256SUMS
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_TAG" \
+            --generate-notes \
+            dist/catalog.json dist/SHA256SUMS dist/*.tar.gz
