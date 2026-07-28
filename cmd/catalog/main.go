@@ -67,6 +67,7 @@ type catalog struct {
 type catalogPlugin struct {
 	Name         string        `json:"name"`
 	Version      string        `json:"version"`
+	Description  string        `json:"description,omitempty"`
 	AssetURL     string        `json:"asset_url"`
 	SHA256       string        `json:"sha256"`
 	Path         string        `json:"path"`
@@ -147,6 +148,7 @@ func generate(sourcePath, outputPath, assetsDir, repository, releaseTag, package
 		plugins = append(plugins, catalogPlugin{
 			Name:         p.Name,
 			Version:      p.Version,
+			Description:  p.Description,
 			AssetURL:     fmt.Sprintf("https://github.com/%s/releases/download/%s/%s-%s.tar.gz", src.Repository, src.ReleaseTag, p.Name, p.Version),
 			SHA256:       sha,
 			Path:         filepath.ToSlash(filepath.Join(packageRoot, p.Name)),
