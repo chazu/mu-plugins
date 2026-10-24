@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "chazu/mu-plugins",
-  "release_tag": "catalog-v0.1.1",
+  "release_tag": "catalog-v0.1.2",
   "plugins": [
     {
       "name": "aws",
@@ -31,6 +31,14 @@
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": ["docker"]
+    },
+    {
+      "name": "doppler",
+      "version": "0.1.0",
+      "description": "Read-only Doppler secret provider",
+      "entrypoint": "plugin.bb",
+      "toolchain": "bb",
+      "requirements": ["doppler"]
     },
     {
       "name": "envsecret",

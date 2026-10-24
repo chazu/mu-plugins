@@ -11,6 +11,7 @@ bundleable and installable by mu.
 | `aws` | AWS EC2/VPC/subnet observer |
 | `cowsay` | Demo text transformation |
 | `docker` | Docker image builder |
+| `doppler` | Read-only Doppler secret provider |
 | `envsecret` | Read-only environment secret provider |
 | `file` | File convergence |
 | `go` | Go build toolchain |
