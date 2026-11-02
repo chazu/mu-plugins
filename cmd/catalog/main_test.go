@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -173,5 +174,28 @@ func TestGenerateGoPluginExcludesBuildOutput(t *testing.T) {
 		if header.Name == "plugins/demo/plugin" {
 			t.Fatal("archive contains the build output")
 		}
+	}
+}
+
+func TestGenerateRejectsRemovedSourceFields(t *testing.T) {
+	root := t.TempDir()
+	source := filepath.Join(root, "catalog.source.json")
+	sourceData := []byte(`{
+  "schema_version": 1,
+  "repository": "example/plugins",
+  "release_tag": "catalog-v0.1.0",
+  "plugins": [{
+    "name": "demo",
+    "version": "0.1.0",
+    "entrypoint": "plugin.bb",
+    "schemas": [{"module": "mu/demo", "version": "v1", "path": "schemas"}]
+  }]
+}`)
+	if err := os.WriteFile(source, sourceData, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	err := generate(source, filepath.Join(root, "catalog.json"), "", "", "", filepath.Join(root, "plugins"))
+	if err == nil || !strings.Contains(err.Error(), `unknown field "schemas"`) {
+		t.Fatalf("generate error = %v, want unknown field \"schemas\"", err)
 	}
 }

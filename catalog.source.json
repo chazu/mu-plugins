@@ -37,8 +37,8 @@
     },
     {
       "name": "k8s",
-      "version": "0.3.0",
-      "description": "Kubernetes convergence, drift, and Secret capture",
+      "version": "0.4.0",
+      "description": "Kubernetes apply and Secret capture",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": ["kubectl"]
@@ -53,7 +53,7 @@
     },
     {
       "name": "lint",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Linter wrapper",
       "entrypoint": "plugin.bb",
       "toolchain": "bb"
@@ -92,8 +92,8 @@
     },
     {
       "name": "terraform",
-      "version": "0.2.0",
-      "description": "Terraform planning, apply, and drift observation",
+      "version": "0.3.0",
+      "description": "Terraform plan, apply, and sensitive-output capture",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": ["terraform"]

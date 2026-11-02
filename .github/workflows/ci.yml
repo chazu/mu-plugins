@@ -47,9 +47,11 @@ jobs:
           mkdir -p "$HOME/.mu/toolchains/bb"
           tar -xzf "$archive" -C "$HOME/.mu/toolchains/bb"
           chmod +x "$HOME/.mu/toolchains/bb/bb"
+      # The plugins track mu main (no `observe`, no `mu plugin test`,
+      # env_passthrough), so test them against a main pseudo-version.
       - name: Install mu
         run: |
-          go install github.com/chazu/mu/cmd/mu@v0.3.4
+          go install github.com/chazu/mu/cmd/mu@v0.3.6-0.20261102012550-7275bda77a58
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Plugin discovery and fixtures
         run: bash scripts/test-plugins.sh

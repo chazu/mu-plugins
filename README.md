@@ -12,14 +12,14 @@ bundleable and installable by mu.
 | `doppler` | Babashka | Read-only Doppler secret provider |
 | `file` | Go | File convergence |
 | `go` | Babashka | Go build toolchain |
-| `k8s` | Babashka | Kubernetes convergence and drift observer |
+| `k8s` | Babashka | Kubernetes apply and Secret capture |
 | `keypair-gen` | Go | Ed25519/ECDSA keypair generator |
-| `lint` | Babashka | Linter wrapper |
+| `lint` | Babashka | Linter wrapper (check; fix only with `fix: true`) |
 | `pass` | Go | `pass` secret provider |
 | `remote-exec` | Go | Remote SSH command execution |
 | `remote-file` | Go | Remote file convergence |
 | `sops` | Babashka | SOPS secret provider |
-| `terraform` | Babashka | Terraform plan/apply and drift observer |
+| `terraform` | Babashka | Terraform plan/apply and sensitive-output capture |
 
 The canonical implementation for each package is the entrypoint declared by
 its `plugins/<name>/mu.cue`.
@@ -53,12 +53,11 @@ bash scripts/check-catalog.sh   # catalog.json is generated and reproducible
 bash scripts/test-plugins.sh    # discover contract for every plugin
 ```
 
-To test one Go plugin by hand, build it first:
-
-```bash
-(cd plugins/pass && go build -trimpath -o plugin .)
-mu plugin test plugins/pass
-```
+`test-plugins.sh` needs a mu built from current `chazu/mu` main (set
+`MU_BIN` to use one that is not on `PATH`) and `bb`. It registers every
+package directory as a project plugin in a throwaway project and HOME, then
+runs discover through `mu plugin info`, which rejects removed capabilities
+such as `observe`. Go plugins are built first, as `mu plugin install` does.
 
 ## Catalog and releases
 

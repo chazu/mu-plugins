@@ -8,30 +8,26 @@
       "version": "0.1.0",
       "description": "Docker image builder",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/docker-0.1.0.tar.gz",
-      "sha256": "3e45b8143766b340f3da95972dff68d0a7645fef8b2d64c23b1db9951a65a835",
+      "sha256": "06e5ca67c9010c7181c6e0e346389b4f0c730fe86ea57cca52386a5ef52e1540",
       "path": "plugins/docker",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "docker"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     },
     {
       "name": "doppler",
       "version": "0.1.0",
       "description": "Read-only Doppler secret provider",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/doppler-0.1.0.tar.gz",
-      "sha256": "fc29e195179c6f005a282f8c25ea7b27c2b8da08bb05710091c8f2fd10534f4d",
+      "sha256": "350162f5f4728dd542fc981261fedc8bdff4747408a5512e4378ac6cee0e7fa8",
       "path": "plugins/doppler",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "doppler"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     },
     {
       "name": "file",
@@ -44,8 +40,6 @@
       "requirements": [
         "go >= 1.26"
       ],
-      "schemas": [],
-      "pudl_mappings": [],
       "build": {
         "command": [
           "go",
@@ -67,30 +61,26 @@
       "version": "0.1.0",
       "description": "Go build toolchain",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/go-0.1.0.tar.gz",
-      "sha256": "80548ea131c6d5ba139958f65a7a0fe2c08c6368f5b9077fd4d8e8e7017a823e",
+      "sha256": "9ca8b3f0ff8af5b658590833efe7652609f1060f3d82351ec89533c628cd541d",
       "path": "plugins/go",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "go"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     },
     {
       "name": "k8s",
-      "version": "0.3.0",
-      "description": "Kubernetes convergence, drift, and Secret capture",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/k8s-0.3.0.tar.gz",
-      "sha256": "6ab54f6552626b3de2fabefdac7c49070fec636478b5e55659c9587d51c82c01",
+      "version": "0.4.0",
+      "description": "Kubernetes apply and Secret capture",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/k8s-0.4.0.tar.gz",
+      "sha256": "9fc4b5d184942a6e2ad411cd5a12c280493f12135b97b970876f2ba0fc85b89b",
       "path": "plugins/k8s",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "kubectl"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     },
     {
       "name": "keypair-gen",
@@ -103,8 +93,6 @@
       "requirements": [
         "go >= 1.26"
       ],
-      "schemas": [],
-      "pudl_mappings": [],
       "build": {
         "command": [
           "go",
@@ -123,16 +111,14 @@
     },
     {
       "name": "lint",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Linter wrapper",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/lint-0.1.0.tar.gz",
-      "sha256": "4dc84f2079c0d170fe7a40e5533830b0b2c57b0c9f808ac72251c538808c1b87",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/lint-0.2.0.tar.gz",
+      "sha256": "06e74ef94540a4bcb11d6e34f3ad71df1cfc1ddb5209cd2aa098483134032f83",
       "path": "plugins/lint",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
-      "requirements": [],
-      "schemas": [],
-      "pudl_mappings": []
+      "requirements": []
     },
     {
       "name": "pass",
@@ -146,8 +132,6 @@
         "go >= 1.26",
         "pass"
       ],
-      "schemas": [],
-      "pudl_mappings": [],
       "build": {
         "command": [
           "go",
@@ -169,15 +153,13 @@
       "version": "0.2.0",
       "description": "Remote SSH command execution",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/remote-exec-0.2.0.tar.gz",
-      "sha256": "5108c6b28c88821ad5649af22db4b63938e66d20866eeefee8fce2ca7d3e5fad",
+      "sha256": "7449a6906773b87ca4732805f262d3c926739c655baece19181c931515b9fb89",
       "path": "plugins/remote-exec",
       "entrypoint": "plugin",
       "requirements": [
         "go >= 1.26",
         "ssh"
       ],
-      "schemas": [],
-      "pudl_mappings": [],
       "build": {
         "command": [
           "go",
@@ -207,8 +189,6 @@
         "go >= 1.26",
         "ssh"
       ],
-      "schemas": [],
-      "pudl_mappings": [],
       "build": {
         "command": [
           "go",
@@ -231,30 +211,26 @@
       "version": "0.1.0",
       "description": "Bidirectional SOPS secret provider",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/sops-0.1.0.tar.gz",
-      "sha256": "922f863b0c394fe654ed2861087888ad5afde8ab7b5ee2488cc2fe5133c815f1",
+      "sha256": "45765bf354dd43f5c45a829056f6acdb95f140c7df56c60116d8c07e5cd5d1cf",
       "path": "plugins/sops",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "sops"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     },
     {
       "name": "terraform",
-      "version": "0.2.0",
-      "description": "Terraform planning, apply, and drift observation",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/terraform-0.2.0.tar.gz",
-      "sha256": "7f401f4ea9b1af3c5761fa604a8eb0916205e1d68e85fc49eb0afec8987071e0",
+      "version": "0.3.0",
+      "description": "Terraform plan, apply, and sensitive-output capture",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/terraform-0.3.0.tar.gz",
+      "sha256": "17ed3d0e29b7f2bb3ec7934a10200206bbe97960b273e4181d723cea6acf8f38",
       "path": "plugins/terraform",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "terraform"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
+      ]
     }
   ]
 }

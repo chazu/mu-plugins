@@ -2,18 +2,18 @@ mu guide plugin go — Go toolchain plugin
 
 Compiles Go packages into executables, archives, or shared libraries.
 
-USAGE IN mu.json
+USAGE IN mu.cue
 
-  {
-    "target": "//cmd/myapp",
-    "toolchain": "go",
-    "sources": ["go.mod", "go.sum", "cmd/myapp/*.go", "internal/**/*.go"],
-    "config": {
-      "output": "myapp",
-      "pkg": "./cmd/myapp",
-      "trimpath": true
+  targets: [{
+    target: "//cmd/myapp"
+    toolchain: "go"
+    sources: ["go.mod", "go.sum", "cmd/myapp/*.go", "internal/**/*.go"]
+    config: {
+      output: "myapp"
+      pkg: "./cmd/myapp"
+      trimpath: true
     }
-  }
+  }]
 
 CONFIG FIELDS
 
@@ -49,6 +49,18 @@ ACTIONS GENERATED
   go-mod-download   Fetches module dependencies (when go.mod present).
                     Runs with network access.
   go-build          Compiles the package. Depends on go-mod-download.
+
+ENVIRONMENT
+
+  Both actions declare only config-derived values in env (CGO_ENABLED,
+  GOOS, GOARCH; GOFLAGS=-modcacherw for the download). Host settings are
+  passed by name with env_passthrough, so their values never enter the
+  plan or the cache key and a shared cache hits across machines:
+
+    PATH HOME GOCACHE GOPATH GOMODCACHE GOPROXY GOPRIVATE GONOPROXY
+    GONOSUMDB GOTOOLCHAIN
+
+  Unset GOCACHE/GOPATH/GOMODCACHE fall back to Go's defaults under HOME.
 
 CAPABILITIES
 

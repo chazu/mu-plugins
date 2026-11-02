@@ -30,26 +30,13 @@ type catalogSource struct {
 }
 
 type sourcePlugin struct {
-	Name         string        `json:"name"`
-	Version      string        `json:"version"`
-	Description  string        `json:"description"`
-	Entrypoint   string        `json:"entrypoint"`
-	Toolchain    string        `json:"toolchain,omitempty"`
-	Requirements []string      `json:"requirements,omitempty"`
-	Schemas      []schemaRef   `json:"schemas,omitempty"`
-	PudlMappings []pudlMapping `json:"pudl_mappings,omitempty"`
-	Build        *buildSpec    `json:"build,omitempty"`
-}
-
-type schemaRef struct {
-	Module  string `json:"module"`
-	Version string `json:"version"`
-	Path    string `json:"path"`
-}
-
-type pudlMapping struct {
-	ResourceType string `json:"resource_type"`
-	Schema       string `json:"schema"`
+	Name         string     `json:"name"`
+	Version      string     `json:"version"`
+	Description  string     `json:"description"`
+	Entrypoint   string     `json:"entrypoint"`
+	Toolchain    string     `json:"toolchain,omitempty"`
+	Requirements []string   `json:"requirements,omitempty"`
+	Build        *buildSpec `json:"build,omitempty"`
 }
 
 type buildSpec struct {
@@ -65,18 +52,16 @@ type catalog struct {
 }
 
 type catalogPlugin struct {
-	Name         string        `json:"name"`
-	Version      string        `json:"version"`
-	Description  string        `json:"description,omitempty"`
-	AssetURL     string        `json:"asset_url"`
-	SHA256       string        `json:"sha256"`
-	Path         string        `json:"path"`
-	Entrypoint   string        `json:"entrypoint"`
-	Toolchain    string        `json:"toolchain,omitempty"`
-	Requirements []string      `json:"requirements"`
-	Schemas      []schemaRef   `json:"schemas"`
-	PudlMappings []pudlMapping `json:"pudl_mappings"`
-	Build        *buildSpec    `json:"build,omitempty"`
+	Name         string     `json:"name"`
+	Version      string     `json:"version"`
+	Description  string     `json:"description,omitempty"`
+	AssetURL     string     `json:"asset_url"`
+	SHA256       string     `json:"sha256"`
+	Path         string     `json:"path"`
+	Entrypoint   string     `json:"entrypoint"`
+	Toolchain    string     `json:"toolchain,omitempty"`
+	Requirements []string   `json:"requirements"`
+	Build        *buildSpec `json:"build,omitempty"`
 }
 
 var (
@@ -110,8 +95,12 @@ func generate(sourcePath, outputPath, assetsDir, repository, releaseTag, package
 	if err != nil {
 		return fmt.Errorf("read source: %w", err)
 	}
+	// Unknown fields are errors so metadata mu no longer reads (such as the
+	// removed schemas and pudl_mappings) fails loudly instead of being dropped.
 	var src catalogSource
-	if err := json.Unmarshal(data, &src); err != nil {
+	dec := json.NewDecoder(bytes.NewReader(data))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&src); err != nil {
 		return fmt.Errorf("decode source: %w", err)
 	}
 	if src.SchemaVersion != 1 {
@@ -157,8 +146,6 @@ func generate(sourcePath, outputPath, assetsDir, repository, releaseTag, package
 			Entrypoint:   p.Entrypoint,
 			Toolchain:    p.Toolchain,
 			Requirements: nonNilStrings(p.Requirements),
-			Schemas:      nonNilSchemas(p.Schemas),
-			PudlMappings: nonNilMappings(p.PudlMappings),
 			Build:        p.Build,
 		})
 	}
@@ -253,21 +240,6 @@ func validatePackage(packageDir string, p sourcePlugin) error {
 	}
 	if version != p.Version {
 		return fmt.Errorf("catalog version %q does not match discover version %q", p.Version, version)
-	}
-	for _, schema := range p.Schemas {
-		if _, err := os.Stat(filepath.Join(packageDir, schema.Path)); err != nil {
-			return fmt.Errorf("schema path %q: %w", schema.Path, err)
-		}
-		for _, value := range []string{schema.Module, schema.Version, schema.Path} {
-			if !bytes.Contains(manifest, []byte(value)) {
-				return fmt.Errorf("schema declaration %q is missing from mu.cue", value)
-			}
-		}
-	}
-	if len(p.PudlMappings) > 0 {
-		if _, err := os.Stat(filepath.Join(packageDir, "pudl.cue")); err != nil {
-			return fmt.Errorf("pudl.cue: %w", err)
-		}
 	}
 	return nil
 }
@@ -388,20 +360,6 @@ func archivePackage(packageDir, name, version, assetsDir string, exclude []strin
 func nonNilStrings(values []string) []string {
 	if values == nil {
 		return []string{}
-	}
-	return values
-}
-
-func nonNilSchemas(values []schemaRef) []schemaRef {
-	if values == nil {
-		return []schemaRef{}
-	}
-	return values
-}
-
-func nonNilMappings(values []pudlMapping) []pudlMapping {
-	if values == nil {
-		return []pudlMapping{}
 	}
 	return values
 }

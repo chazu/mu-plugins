@@ -1,19 +1,20 @@
 mu guide plugin k8s — Kubernetes convergence plugin
 
-Applies Kubernetes manifests and detects drift between desired and live state.
+Applies Kubernetes manifests with kubectl and can capture cluster Secret
+values into a secret backend.
 
-USAGE IN mu.json
+USAGE IN mu.cue
 
-  {
-    "target": "//deploy/myapp",
-    "toolchain": "k8s",
-    "sources": ["deploy/*.yaml"],
-    "config": {
-      "namespace": "production",
-      "context": "my-cluster",
-      "server_side": true
+  targets: [{
+    target: "//deploy/myapp"
+    toolchain: "k8s"
+    sources: ["deploy/*.yaml"]
+    config: {
+      namespace: "production"
+      context: "my-cluster"
+      server_side: true
     }
-  }
+  }]
 
 CONFIG FIELDS
 
@@ -23,13 +24,6 @@ CONFIG FIELDS
   server_side           Use server-side apply (default: true).
   prune                 Prune resources not in manifest (default: false).
   dry_run               Run kubectl --dry-run=server (default: false).
-  ignore_paths          List of dot-separated field paths to ignore in drift
-                        detection (e.g. ["metadata.annotations.kubectl"]).
-  inventory             Optional live-cluster inventory mode. Set `kinds` to a
-                        non-empty list of kubectl resource kinds; use
-                        `namespace` for one namespace or `all_namespaces: true`
-                        for cluster-wide inventory. Inventory mode does not
-                        require source manifests.
   sealed_output_secrets Capture-mode map: sealed_output NAME ->
                         {namespace, secret, key}. See "Sealed outputs" below.
 
@@ -44,30 +38,6 @@ EXAMPLES
   Dry-run only:
     {"namespace": "staging", "dry_run": true}
 
-  Inventory namespaced workloads:
-    {"inventory": {"kinds": ["pods", "deployments"], "namespace": "production"}}
-
-  Inventory cluster-wide services:
-    {"inventory": {"kinds": ["services"], "all_namespaces": true}}
-
-OBSERVATION (DRIFT DETECTION)
-
-  mu observe //deploy/myapp
-
-  The plugin compares desired state (from source manifests) against live
-  state (from kubectl get). It strips server-managed fields like:
-  - metadata.managedFields, resourceVersion, uid, creationTimestamp
-  - generation, selfLink, status
-
-  It projects live state down to only the keys present in the desired
-  state, then reports differences as dotted-path diffs.
-
-  Manifest drift records describe the desired resource comparison. Inventory
-  records contain the live Kubernetes object and include _schema
-  "k8s.resource" so PUDL can route them to its open Kubernetes resource
-  envelope. The object kind remains in the `kind` field, allowing a project to
-  add a stricter kind-specific CUE schema later.
-
 ACTIONS GENERATED
 
   apply           Applies manifests with kubectl apply. Requires network.
@@ -77,7 +47,8 @@ ACTIONS GENERATED
                   (chmod 0600). Depends on apply. Only generated when
                   sealed_outputs is set.
 
-All actions are impure. Sealed inputs declared at target-level are
+All actions are impure and declare no env, so kubectl runs with mu's
+environment (PATH, HOME, KUBECONFIG, ...). Sealed inputs declared at target-level are
 forwarded to every action.
 
 SEALED INPUTS
@@ -107,19 +78,21 @@ SEALED OUTPUTS (cluster Secret -> secret backend)
   Pair target.sealed_outputs with config.sealed_output_secrets, mapping
   each sealed-output NAME to a {namespace, secret, key} triple:
 
-    {
-      "target": "//deploy/db-creds-capture",
-      "toolchain": "k8s",
-      "sources": ["deploy/db.yaml"],
-      "config": {
-        "context": "prod",
-        "sealed_output_secrets": {
-          "DBPASS": {"namespace": "db", "secret": "creds", "key": "password"}
+    targets: [{
+      target: "//deploy/db-creds-capture"
+      toolchain: "k8s"
+      sources: ["deploy/db.yaml"]
+      config: {
+        context: "prod"
+        sealed_output_secrets: DBPASS: {
+          namespace: "db"
+          secret: "creds"
+          key: "password"
         }
-      },
-      "sealed_outputs":      {"DBPASS": "pass:rds/master-password"},
-      "sealed_output_modes": {"DBPASS": "create_if_absent"}
-    }
+      }
+      sealed_outputs: DBPASS: "pass:rds/master-password"
+      sealed_output_modes: DBPASS: "create_if_absent"
+    }]
 
   After the apply action succeeds, fetch-secrets runs:
 
@@ -143,4 +116,4 @@ SEALED OUTPUTS (cluster Secret -> secret backend)
 
 CAPABILITIES
 
-  discover, plan, observe
+  discover, plan
