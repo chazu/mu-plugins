@@ -44,8 +44,9 @@ mkdir -p "$mu_home/.mu/toolchains/bb"
 ln -s "$bb_path" "$mu_home/.mu/toolchains/bb/bb"
 
 # doppler's suite runs the plugin against a fake CLI and checks that no
-# secret value reaches an error or stderr.
-"$bb_path" "$root_dir/plugins/doppler/test/plugin_test.bb"
+# secret value reaches an error or stderr. It starts the plugin with `bb` from
+# PATH.
+PATH="$PATH:$(dirname "$bb_path")" "$bb_path" "$root_dir/plugins/doppler/test/plugin_test.bb"
 
 # Go plugins are source-only nested modules; their unit tests live with the
 # canonical source in the mu repo. Build each exactly as `mu plugin install`
