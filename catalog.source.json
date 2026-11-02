@@ -5,7 +5,7 @@
   "plugins": [
     {
       "name": "docker",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Docker image builder",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
@@ -13,7 +13,7 @@
     },
     {
       "name": "doppler",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Read-only Doppler secret provider",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
@@ -21,7 +21,7 @@
     },
     {
       "name": "file",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "description": "File convergence with sealed-output capture",
       "entrypoint": "plugin",
       "requirements": ["go >= 1.26"],
@@ -29,7 +29,7 @@
     },
     {
       "name": "go",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Go build toolchain",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
@@ -37,7 +37,7 @@
     },
     {
       "name": "k8s",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "description": "Kubernetes apply and Secret capture",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
@@ -45,7 +45,7 @@
     },
     {
       "name": "keypair-gen",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Ed25519 and ECDSA keypair generator",
       "entrypoint": "plugin",
       "requirements": ["go >= 1.26"],
@@ -53,7 +53,7 @@
     },
     {
       "name": "lint",
-      "version": "0.2.0",
+      "version": "0.4.0",
       "description": "Linter wrapper",
       "entrypoint": "plugin.bb",
       "toolchain": "bb"
@@ -68,7 +68,7 @@
     },
     {
       "name": "remote-exec",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "description": "Remote SSH command execution",
       "entrypoint": "plugin",
       "requirements": ["go >= 1.26", "ssh"],
@@ -76,7 +76,7 @@
     },
     {
       "name": "remote-file",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "description": "Remote file convergence over SSH",
       "entrypoint": "plugin",
       "requirements": ["go >= 1.26", "ssh"],
@@ -84,7 +84,7 @@
     },
     {
       "name": "sops",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Bidirectional SOPS secret provider",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
@@ -92,7 +92,7 @@
     },
     {
       "name": "terraform",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "description": "Terraform plan, apply, and sensitive-output capture",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
