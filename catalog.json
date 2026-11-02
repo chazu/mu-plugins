@@ -34,7 +34,7 @@
       "version": "0.3.0",
       "description": "File convergence with sealed-output capture",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/file-0.3.0.tar.gz",
-      "sha256": "b78a90ff071cbf07b4088e9db8c635c42fa617e972bc75b48508d5a0d1eb6bc9",
+      "sha256": "de33f348e8f7ea46250e4901317f4d2156104219f2dcc95b31d025ffb9b0eec3",
       "path": "plugins/file",
       "entrypoint": "plugin",
       "requirements": [
@@ -87,7 +87,7 @@
       "version": "0.2.0",
       "description": "Ed25519 and ECDSA keypair generator",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/keypair-gen-0.2.0.tar.gz",
-      "sha256": "ae4131fdda2cc18a4a999d1579e26db76c5019145f30ecc4a2f3bd5a058e9288",
+      "sha256": "f65b6e43347947684f5d76846f44f6cbc712152d9dbba9cdcf94597aff5ed169",
       "path": "plugins/keypair-gen",
       "entrypoint": "plugin",
       "requirements": [
@@ -125,7 +125,7 @@
       "version": "0.3.0",
       "description": "Bidirectional pass secret provider",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/pass-0.3.0.tar.gz",
-      "sha256": "c4e7f96ee9328213a048a5b98fde2022400f79ff630906ad047b7693cfe772d2",
+      "sha256": "a666658d229ea9e4e1e1ab02cb8944df2a61b85a40dcc0185c8851fd0b2102c8",
       "path": "plugins/pass",
       "entrypoint": "plugin",
       "requirements": [
@@ -153,7 +153,7 @@
       "version": "0.3.0",
       "description": "Remote SSH command execution",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/remote-exec-0.3.0.tar.gz",
-      "sha256": "c644fb273c7f0bf19288de0a770ef4320e7c17420d194539e9b250d040e9b253",
+      "sha256": "540ef5cc3f51fa84d1a20e5e0628047f587d0762ce3024573d359f3a3ed07cb3",
       "path": "plugins/remote-exec",
       "entrypoint": "plugin",
       "requirements": [
@@ -182,7 +182,7 @@
       "version": "0.3.0",
       "description": "Remote file convergence over SSH",
       "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/remote-file-0.3.0.tar.gz",
-      "sha256": "889a24398643a16254eedfd7b1ab4ee701715a7d46af4f0b0018906d1b5118e8",
+      "sha256": "e839b172f45caf776d0e3c851f96e0688a6b1d308540bf4c0bdc5090fe7bbeac",
       "path": "plugins/remote-file",
       "entrypoint": "plugin",
       "requirements": [
