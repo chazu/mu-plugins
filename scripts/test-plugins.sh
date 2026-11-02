@@ -13,28 +13,32 @@ if ! command -v "$mu_bin" >/dev/null 2>&1; then
   exit 1
 fi
 
-plugins=(
-  aws cowsay docker doppler file go host k8s keypair-gen lint pass
-  remote-exec remote-file scratch sops terraform void zig
-)
+bb_plugins=(docker doppler go k8s lint sops terraform)
+go_plugins=(file keypair-gen pass remote-exec remote-file)
 
-for name in "${plugins[@]}"; do
-  if [[ "$name" == aws ]]; then
-    MU_AWS_FIXTURE=1 \
-      PATH="$root_dir/plugins/aws/testdata/bin:$PATH" \
-      "$mu_bin" plugin test --no-color --config "$root_dir/mu.cue" "$root_dir/plugins/$name"
-  else
-    "$mu_bin" plugin test --no-color --config "$root_dir/mu.cue" "$root_dir/plugins/$name"
-  fi
+for name in "${bb_plugins[@]}"; do
+  "$mu_bin" plugin test --no-color --config "$root_dir/mu.cue" "$root_dir/plugins/$name"
 done
 
 # doppler's suite runs the plugin against a fake CLI and checks that no
 # secret value reaches an error or stderr. CI installs bb under ~/.mu.
 PATH="$PATH:$HOME/.mu/toolchains/bb" bb "$root_dir/plugins/doppler/test/plugin_test.bb"
 
-# envsecret is the one source-only Go plugin. Exercise its nested module
-# directly so the contract job verifies the package build boundary as well.
-printf '%s\n' '{"method":"discover"}' \
-  | (cd "$root_dir/plugins/envsecret" && go run .) \
-  | grep -q '"name":"env"'
-echo "envsecret discover passed"
+# Go plugins are source-only nested modules; their unit tests live with the
+# canonical source in the mu repo. Build each exactly as `mu plugin install`
+# does, then run the discover contract against the binary.
+cleanup_go_plugins() {
+  for name in "${go_plugins[@]}"; do
+    rm -f "$root_dir/plugins/$name/plugin"
+  done
+}
+trap cleanup_go_plugins EXIT
+
+for name in "${go_plugins[@]}"; do
+  (
+    cd "$root_dir/plugins/$name"
+    go vet .
+    go build -trimpath -o plugin .
+  )
+  "$mu_bin" plugin test --no-color --config "$root_dir/mu.cue" "$root_dir/plugins/$name"
+done

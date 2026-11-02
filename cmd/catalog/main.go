@@ -84,6 +84,8 @@ var (
 	toolchainRE  = regexp.MustCompile(`(?m)\btoolchain:\s*"([^"]+)"`)
 	bbVersionRE  = regexp.MustCompile(`(?m)"version"\s+"([^"]+)"`)
 	goVersionRE  = regexp.MustCompile(`(?m)SecretPlugin\s*\(\s*"[^"]+"\s*,\s*"([^"]+)"`)
+	// goFieldVersionRE matches the Version field of a muplugin.Plugin literal.
+	goFieldVersionRE = regexp.MustCompile(`(?m)^\s*Version:\s*"([^"]+)"`)
 )
 
 func main() {
@@ -140,7 +142,7 @@ func generate(sourcePath, outputPath, assetsDir, repository, releaseTag, package
 
 		sha := ""
 		if assetsDir != "" {
-			sha, err = archivePackage(packageDir, p.Name, p.Version, assetsDir)
+			sha, err = archivePackage(packageDir, p.Name, p.Version, assetsDir, buildOutputs(p))
 			if err != nil {
 				return fmt.Errorf("plugin %s: archive: %w", p.Name, err)
 			}
@@ -233,16 +235,17 @@ func validatePackage(packageDir string, p sourcePlugin) error {
 	if _, err := os.Stat(filepath.Join(packageDir, "GUIDE.md")); err != nil {
 		return fmt.Errorf("GUIDE.md: %w", err)
 	}
-	entrypointPath := filepath.Join(packageDir, p.Entrypoint)
-	if _, err := os.Stat(entrypointPath); err != nil {
-		if p.Build == nil {
-			return fmt.Errorf("entrypoint %q is missing and has no build specification", p.Entrypoint)
+	if p.Build != nil {
+		if len(p.Build.Command) == 0 || p.Build.Command[0] == "" {
+			return fmt.Errorf("build command is required")
 		}
 		for _, source := range p.Build.Sources {
 			if _, sourceErr := os.Stat(filepath.Join(packageDir, source)); sourceErr != nil {
 				return fmt.Errorf("build source %q: %w", source, sourceErr)
 			}
 		}
+	} else if _, err := os.Stat(filepath.Join(packageDir, p.Entrypoint)); err != nil {
+		return fmt.Errorf("entrypoint %q is missing and has no build specification", p.Entrypoint)
 	}
 	version, err := discoverVersion(packageDir)
 	if err != nil {
@@ -277,21 +280,43 @@ func discoverVersion(packageDir string) (string, error) {
 		}
 	}
 	if data, err := os.ReadFile(filepath.Join(packageDir, "main.go")); err == nil {
-		match := goVersionRE.FindSubmatch(data)
-		if len(match) == 2 {
-			return string(match[1]), nil
+		for _, re := range []*regexp.Regexp{goVersionRE, goFieldVersionRE} {
+			if match := re.FindSubmatch(data); len(match) == 2 {
+				return string(match[1]), nil
+			}
 		}
 	}
 	return "", fmt.Errorf("could not find discover version in plugin source")
 }
 
-func archivePackage(packageDir, name, version, assetsDir string) (string, error) {
+// buildOutputs lists package-relative files produced by a plugin's build
+// command. They are never shipped: the installer builds them from source, and
+// a locally built binary must not change the archive hash.
+func buildOutputs(p sourcePlugin) []string {
+	if p.Build == nil {
+		return nil
+	}
+	return []string{p.Entrypoint}
+}
+
+func archivePackage(packageDir, name, version, assetsDir string, exclude []string) (string, error) {
+	skip := make(map[string]bool, len(exclude))
+	for _, rel := range exclude {
+		skip[filepath.Clean(filepath.FromSlash(rel))] = true
+	}
 	var files []string
 	err := filepath.WalkDir(packageDir, func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
 		if entry.IsDir() {
+			return nil
+		}
+		rel, err := filepath.Rel(packageDir, path)
+		if err != nil {
+			return err
+		}
+		if skip[rel] {
 			return nil
 		}
 		files = append(files, path)

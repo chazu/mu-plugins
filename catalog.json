@@ -1,60 +1,13 @@
 {
   "schema_version": 1,
   "repository": "chazu/mu-plugins",
-  "release_tag": "catalog-v0.1.2",
+  "release_tag": "catalog-v0.2.0",
   "plugins": [
-    {
-      "name": "aws",
-      "version": "0.1.0",
-      "description": "AWS EC2, VPC, and subnet observer",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/aws-0.1.0.tar.gz",
-      "sha256": "8ec43a8fa1f8938b2203df9fe8b303fc2e886e91af30fb648c6ad3886be1b3c9",
-      "path": "plugins/aws",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [
-        "aws-cli >= 2"
-      ],
-      "schemas": [
-        {
-          "module": "mu/aws",
-          "version": "v1",
-          "path": "schemas/mu/aws"
-        }
-      ],
-      "pudl_mappings": [
-        {
-          "resource_type": "aws.ec2.instance",
-          "schema": "pudl/aws.#Instance"
-        },
-        {
-          "resource_type": "aws.ec2.vpc",
-          "schema": "pudl/aws.#VPC"
-        },
-        {
-          "resource_type": "aws.ec2.subnet",
-          "schema": "pudl/aws.#Subnet"
-        }
-      ]
-    },
-    {
-      "name": "cowsay",
-      "version": "0.1.0",
-      "description": "Demo text transformation",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/cowsay-0.1.0.tar.gz",
-      "sha256": "95ffb2abb3963d862c35ca95c329da8f014db7e79abcca92a43a87523192bcc5",
-      "path": "plugins/cowsay",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [],
-      "schemas": [],
-      "pudl_mappings": []
-    },
     {
       "name": "docker",
       "version": "0.1.0",
       "description": "Docker image builder",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/docker-0.1.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/docker-0.1.0.tar.gz",
       "sha256": "3e45b8143766b340f3da95972dff68d0a7645fef8b2d64c23b1db9951a65a835",
       "path": "plugins/docker",
       "entrypoint": "plugin.bb",
@@ -69,7 +22,7 @@
       "name": "doppler",
       "version": "0.1.0",
       "description": "Read-only Doppler secret provider",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/doppler-0.1.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/doppler-0.1.0.tar.gz",
       "sha256": "fc29e195179c6f005a282f8c25ea7b27c2b8da08bb05710091c8f2fd10534f4d",
       "path": "plugins/doppler",
       "entrypoint": "plugin.bb",
@@ -81,13 +34,13 @@
       "pudl_mappings": []
     },
     {
-      "name": "envsecret",
-      "version": "0.1.0",
-      "description": "Read-only environment secret provider",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/envsecret-0.1.0.tar.gz",
-      "sha256": "31b412ef609007c8fcd66a501bb4b12f53591f14d23e3d68e2edf5ce2ef79ed9",
-      "path": "plugins/envsecret",
-      "entrypoint": "envsecret",
+      "name": "file",
+      "version": "0.2.0",
+      "description": "File convergence with sealed-output capture",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/file-0.2.0.tar.gz",
+      "sha256": "c5a4f61bdb5442d673417c174cabf8b2469bcc52bfc11c317ff4b0aea426cafd",
+      "path": "plugins/file",
+      "entrypoint": "plugin",
       "requirements": [
         "go >= 1.26"
       ],
@@ -97,33 +50,23 @@
         "command": [
           "go",
           "build",
+          "-trimpath",
           "-o",
-          "envsecret",
+          "plugin",
           "."
         ],
         "sources": [
-          "main.go"
+          "main.go",
+          "go.mod",
+          "go.sum"
         ]
       }
-    },
-    {
-      "name": "file",
-      "version": "0.2.0",
-      "description": "File convergence with sealed-output capture",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/file-0.2.0.tar.gz",
-      "sha256": "c631bf15352fb6bc351e5aea887f1684e6fb176c5e4c5cae2596e73bbcc418fb",
-      "path": "plugins/file",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [],
-      "schemas": [],
-      "pudl_mappings": []
     },
     {
       "name": "go",
       "version": "0.1.0",
       "description": "Go build toolchain",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/go-0.1.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/go-0.1.0.tar.gz",
       "sha256": "80548ea131c6d5ba139958f65a7a0fe2c08c6368f5b9077fd4d8e8e7017a823e",
       "path": "plugins/go",
       "entrypoint": "plugin.bb",
@@ -135,25 +78,10 @@
       "pudl_mappings": []
     },
     {
-      "name": "host",
-      "version": "0.1.0",
-      "description": "Remote host observer over SSH",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/host-0.1.0.tar.gz",
-      "sha256": "e1c1949b84bd566ef3acd2188edf7f01dcca92fb0b247fed72e83ba58298da97",
-      "path": "plugins/host",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [
-        "ssh"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
-    },
-    {
       "name": "k8s",
       "version": "0.3.0",
       "description": "Kubernetes convergence, drift, and Secret capture",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/k8s-0.3.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/k8s-0.3.0.tar.gz",
       "sha256": "6ab54f6552626b3de2fabefdac7c49070fec636478b5e55659c9587d51c82c01",
       "path": "plugins/k8s",
       "entrypoint": "plugin.bb",
@@ -168,20 +96,36 @@
       "name": "keypair-gen",
       "version": "0.1.0",
       "description": "Ed25519 and ECDSA keypair generator",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/keypair-gen-0.1.0.tar.gz",
-      "sha256": "621f0698d4cd621e849f62ff424d0c6bae6fa06e85b15f5c6ee40ae81b3e4ad9",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/keypair-gen-0.1.0.tar.gz",
+      "sha256": "eedd53acdf0cc9f2dc8f16f42a2f4fc0c3849a3e065c87a4c4ff4462c71cc966",
       "path": "plugins/keypair-gen",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [],
+      "entrypoint": "plugin",
+      "requirements": [
+        "go >= 1.26"
+      ],
       "schemas": [],
-      "pudl_mappings": []
+      "pudl_mappings": [],
+      "build": {
+        "command": [
+          "go",
+          "build",
+          "-trimpath",
+          "-o",
+          "plugin",
+          "."
+        ],
+        "sources": [
+          "main.go",
+          "go.mod",
+          "go.sum"
+        ]
+      }
     },
     {
       "name": "lint",
       "version": "0.1.0",
       "description": "Linter wrapper",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/lint-0.1.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/lint-0.1.0.tar.gz",
       "sha256": "4dc84f2079c0d170fe7a40e5533830b0b2c57b0c9f808ac72251c538808c1b87",
       "path": "plugins/lint",
       "entrypoint": "plugin.bb",
@@ -194,65 +138,99 @@
       "name": "pass",
       "version": "0.3.0",
       "description": "Bidirectional pass secret provider",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/pass-0.3.0.tar.gz",
-      "sha256": "a3b33867d3613ba74cdb676f36c58f3ab56e640356f50c955e6d7bd046417264",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/pass-0.3.0.tar.gz",
+      "sha256": "c4e7f96ee9328213a048a5b98fde2022400f79ff630906ad047b7693cfe772d2",
       "path": "plugins/pass",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
+      "entrypoint": "plugin",
       "requirements": [
+        "go >= 1.26",
         "pass"
       ],
       "schemas": [],
-      "pudl_mappings": []
+      "pudl_mappings": [],
+      "build": {
+        "command": [
+          "go",
+          "build",
+          "-trimpath",
+          "-o",
+          "plugin",
+          "."
+        ],
+        "sources": [
+          "main.go",
+          "go.mod",
+          "go.sum"
+        ]
+      }
     },
     {
       "name": "remote-exec",
       "version": "0.2.0",
       "description": "Remote SSH command execution",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/remote-exec-0.2.0.tar.gz",
-      "sha256": "b5913a71e4306dd173bd1f2ee6ca55543d188832ad4d84fffe1b53d5471f71b6",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/remote-exec-0.2.0.tar.gz",
+      "sha256": "5108c6b28c88821ad5649af22db4b63938e66d20866eeefee8fce2ca7d3e5fad",
       "path": "plugins/remote-exec",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
+      "entrypoint": "plugin",
       "requirements": [
+        "go >= 1.26",
         "ssh"
       ],
       "schemas": [],
-      "pudl_mappings": []
+      "pudl_mappings": [],
+      "build": {
+        "command": [
+          "go",
+          "build",
+          "-trimpath",
+          "-o",
+          "plugin",
+          "."
+        ],
+        "sources": [
+          "main.go",
+          "go.mod",
+          "go.sum",
+          "internal/ssh/ssh.go"
+        ]
+      }
     },
     {
       "name": "remote-file",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Remote file convergence over SSH",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/remote-file-0.1.0.tar.gz",
-      "sha256": "791d6422b467733886a72000847cc189fd9b54879cbb06a55f58bf8753d7c73f",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/remote-file-0.2.0.tar.gz",
+      "sha256": "8fdc63f836d082b8b302aa558844469c9927e69360e832b98af25a1c68c9528c",
       "path": "plugins/remote-file",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
+      "entrypoint": "plugin",
       "requirements": [
+        "go >= 1.26",
         "ssh"
       ],
       "schemas": [],
-      "pudl_mappings": []
-    },
-    {
-      "name": "scratch",
-      "version": "0.1.0",
-      "description": "Toolchain bootstrap helper",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/scratch-0.1.0.tar.gz",
-      "sha256": "1f809105655ee1c83f9ac4e4333d444af3a73b2638e249663260602dc7a94eb1",
-      "path": "plugins/scratch",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [],
-      "schemas": [],
-      "pudl_mappings": []
+      "pudl_mappings": [],
+      "build": {
+        "command": [
+          "go",
+          "build",
+          "-trimpath",
+          "-o",
+          "plugin",
+          "."
+        ],
+        "sources": [
+          "main.go",
+          "go.mod",
+          "go.sum",
+          "internal/ssh/ssh.go"
+        ]
+      }
     },
     {
       "name": "sops",
       "version": "0.1.0",
       "description": "Bidirectional SOPS secret provider",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/sops-0.1.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/sops-0.1.0.tar.gz",
       "sha256": "922f863b0c394fe654ed2861087888ad5afde8ab7b5ee2488cc2fe5133c815f1",
       "path": "plugins/sops",
       "entrypoint": "plugin.bb",
@@ -267,41 +245,13 @@
       "name": "terraform",
       "version": "0.2.0",
       "description": "Terraform planning, apply, and drift observation",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/terraform-0.2.0.tar.gz",
+      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.2.0/terraform-0.2.0.tar.gz",
       "sha256": "7f401f4ea9b1af3c5761fa604a8eb0916205e1d68e85fc49eb0afec8987071e0",
       "path": "plugins/terraform",
       "entrypoint": "plugin.bb",
       "toolchain": "bb",
       "requirements": [
         "terraform"
-      ],
-      "schemas": [],
-      "pudl_mappings": []
-    },
-    {
-      "name": "void",
-      "version": "0.1.0",
-      "description": "Build webhook reporter",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/void-0.1.0.tar.gz",
-      "sha256": "bdaa43395ada80d5561f707c8840834cea2bfc0670447e59cbedc6ca090d1056",
-      "path": "plugins/void",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [],
-      "schemas": [],
-      "pudl_mappings": []
-    },
-    {
-      "name": "zig",
-      "version": "0.1.0",
-      "description": "Zig build toolchain",
-      "asset_url": "https://github.com/chazu/mu-plugins/releases/download/catalog-v0.1.2/zig-0.1.0.tar.gz",
-      "sha256": "9a5144c08ae70f11aea39f61c591135796727409926a1d650f3e3426c5b6461f",
-      "path": "plugins/zig",
-      "entrypoint": "plugin.bb",
-      "toolchain": "bb",
-      "requirements": [
-        "zig"
       ],
       "schemas": [],
       "pudl_mappings": []

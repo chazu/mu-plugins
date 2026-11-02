@@ -19,5 +19,5 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
 cmp "$root_dir/catalog.json" "$tmp_dir/catalog.json"
 asset_count="$(find "$tmp_dir/assets" -type f -name '*.tar.gz' | wc -l | tr -d ' ')"
-test "$asset_count" = 19
-echo "catalog is generated and reproducible (19 assets)"
+test "$asset_count" = 12
+echo "catalog is generated and reproducible (12 assets)"

@@ -1,10 +1,11 @@
 # mu local state and extracted/cache artifacts
 .mu/
 /mu
+/catalog
 *-plugin.bb
 
-# Go build output for the source-only Go plugin.
-plugins/envsecret/envsecret
+# Go plugin binaries, built from source by `mu plugin install`.
+plugins/*/plugin
 
 # Editor and OS noise
 .DS_Store

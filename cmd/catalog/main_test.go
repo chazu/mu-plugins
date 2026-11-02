@@ -1,8 +1,11 @@
 package main
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,11 +26,11 @@ func TestArchivePackageIsDeterministic(t *testing.T) {
 
 	firstDir := filepath.Join(root, "first")
 	secondDir := filepath.Join(root, "second")
-	firstHash, err := archivePackage(packageDir, "demo", "0.1.0", firstDir)
+	firstHash, err := archivePackage(packageDir, "demo", "0.1.0", firstDir, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	secondHash, err := archivePackage(packageDir, "demo", "0.1.0", secondDir)
+	secondHash, err := archivePackage(packageDir, "demo", "0.1.0", secondDir, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,5 +97,81 @@ func TestGenerateValidatesAndWritesCatalog(t *testing.T) {
 	}
 	if len(got.Plugins) != 1 || got.Plugins[0].SHA256 == "" {
 		t.Fatalf("unexpected generated catalog: %+v", got)
+	}
+}
+
+func TestGenerateGoPluginExcludesBuildOutput(t *testing.T) {
+	root := t.TempDir()
+	packageRoot := filepath.Join(root, "plugins")
+	packageDir := filepath.Join(packageRoot, "demo")
+	if err := os.MkdirAll(packageDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	files := map[string][]byte{
+		"mu.cue":   []byte("package mu\nplugin: {entrypoint: \"plugin\"}\n"),
+		"GUIDE.md": []byte("guide\n"),
+		"go.mod":   []byte("module example.com/demo\n"),
+		"main.go":  []byte("package main\n\nvar p = Plugin{\n\tName:    \"demo\",\n\tVersion: \"0.2.0\",\n}\n"),
+	}
+	for name, data := range files {
+		if err := os.WriteFile(filepath.Join(packageDir, name), data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	source := filepath.Join(root, "catalog.source.json")
+	sourceData := []byte(`{
+  "schema_version": 1,
+  "repository": "example/plugins",
+  "release_tag": "catalog-v0.1.0",
+  "plugins": [{
+    "name": "demo",
+    "version": "0.2.0",
+    "entrypoint": "plugin",
+    "build": {"command": ["go", "build", "-trimpath", "-o", "plugin", "."], "sources": ["main.go", "go.mod"]}
+  }]
+}`)
+	if err := os.WriteFile(source, sourceData, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	cleanAssets := filepath.Join(root, "clean")
+	if err := generate(source, filepath.Join(root, "clean.json"), cleanAssets, "", "", packageRoot); err != nil {
+		t.Fatal(err)
+	}
+	// A locally built binary must neither ship nor change the archive.
+	if err := os.WriteFile(filepath.Join(packageDir, "plugin"), []byte("binary"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	builtAssets := filepath.Join(root, "built")
+	if err := generate(source, filepath.Join(root, "built.json"), builtAssets, "", "", packageRoot); err != nil {
+		t.Fatal(err)
+	}
+	clean, err := os.ReadFile(filepath.Join(cleanAssets, "demo-0.2.0.tar.gz"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	built, err := os.ReadFile(filepath.Join(builtAssets, "demo-0.2.0.tar.gz"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(clean, built) {
+		t.Fatal("built entrypoint changed the source archive")
+	}
+	gz, err := gzip.NewReader(bytes.NewReader(built))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tr := tar.NewReader(gz)
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+		if header.Name == "plugins/demo/plugin" {
+			t.Fatal("archive contains the build output")
+		}
 	}
 }

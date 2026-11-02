@@ -6,31 +6,31 @@ bundleable and installable by mu.
 
 ## Packages
 
-| Plugin | Role |
-| --- | --- |
-| `aws` | AWS EC2/VPC/subnet observer |
-| `cowsay` | Demo text transformation |
-| `docker` | Docker image builder |
-| `doppler` | Read-only Doppler secret provider |
-| `envsecret` | Read-only environment secret provider |
-| `file` | File convergence |
-| `go` | Go build toolchain |
-| `host` | Remote host observer over SSH |
-| `k8s` | Kubernetes convergence and drift observer |
-| `keypair-gen` | Ed25519/ECDSA keypair generator |
-| `lint` | Linter wrapper |
-| `pass` | `pass` secret provider |
-| `remote-exec` | Remote SSH command execution |
-| `remote-file` | Remote file convergence |
-| `scratch` | Toolchain bootstrap helper |
-| `sops` | SOPS secret provider |
-| `terraform` | Terraform plan/apply and drift observer |
-| `void` | Build webhook reporter |
-| `zig` | Zig build toolchain |
+| Plugin | Language | Role |
+| --- | --- | --- |
+| `docker` | Babashka | Docker image builder |
+| `doppler` | Babashka | Read-only Doppler secret provider |
+| `file` | Go | File convergence |
+| `go` | Babashka | Go build toolchain |
+| `k8s` | Babashka | Kubernetes convergence and drift observer |
+| `keypair-gen` | Go | Ed25519/ECDSA keypair generator |
+| `lint` | Babashka | Linter wrapper |
+| `pass` | Go | `pass` secret provider |
+| `remote-exec` | Go | Remote SSH command execution |
+| `remote-file` | Go | Remote file convergence |
+| `sops` | Babashka | SOPS secret provider |
+| `terraform` | Babashka | Terraform plan/apply and drift observer |
 
 The canonical implementation for each package is the entrypoint declared by
-its `plugins/<name>/mu.cue`. Unselected Go ports remain in the mu repository
-until they are deliberately promoted or removed.
+its `plugins/<name>/mu.cue`.
+
+The Go plugins are vendored from `github.com/chazu/mu/plugins/<name>`, which
+owns their tests. Each is a source-only nested module (`main.go`, `go.mod`,
+`go.sum`, plus `internal/ssh` for the SSH plugins). The catalog declares
+`entrypoint: "plugin"` and the build command
+`go build -trimpath -o plugin .`; `mu plugin install` runs it in the
+extracted package directory, so installing one requires Go 1.26 or newer. The
+built binary is ignored by git and never included in a release archive.
 
 ## Package layout
 
@@ -38,31 +38,26 @@ until they are deliberately promoted or removed.
 plugins/<name>/
   mu.cue       package manifest
   GUIDE.md     operator and configuration guide
-  plugin.bb    executable entrypoint (where selected)
-  pudl.cue     optional PUDL semantic mappings
-  schemas/     optional plugin-owned CUE wire schemas
+  plugin.bb    executable entrypoint (Babashka plugins)
+  main.go      source of the built `plugin` entrypoint (Go plugins)
+  go.mod       nested Go module (Go plugins)
 ```
-
-Plugin-owned schemas use the `mu/<plugin>` namespace. PUDL semantic schemas
-remain in PUDL; a package's optional `pudl.cue` maps emitted `_schema` resource
-types to those semantic schemas. The AWS package is the first complete example.
 
 ## Development
 
 From this repository:
 
 ```bash
-mu plugin test plugins/aws
-mu verify
 go test ./...
+bash scripts/check-catalog.sh   # catalog.json is generated and reproducible
+bash scripts/test-plugins.sh    # discover contract for every plugin
 ```
 
-The AWS observer has a deterministic fake-CLI fixture:
+To test one Go plugin by hand, build it first:
 
 ```bash
-MU_AWS_FIXTURE=1 \
-  PATH="$PWD/plugins/aws/testdata/bin:$PATH" \
-  mu plugin test plugins/aws
+(cd plugins/pass && go build -trimpath -o plugin .)
+mu plugin test plugins/pass
 ```
 
 ## Catalog and releases
@@ -80,10 +75,12 @@ go run ./cmd/catalog \
   --source catalog.source.json \
   --output catalog.json \
   --assets-dir "$tmp_dir" \
-  --release-tag catalog-v0.1.0
+  --release-tag catalog-v0.2.0
 ```
 
 Pushing a `catalog-v*` tag runs the release workflow. It uploads
 `catalog.json`, `SHA256SUMS`, and one immutable `<plugin>-<version>.tar.gz`
-source asset per package. The catalog records the release URL and hash that a
-future `mu plugin install` implementation will verify.
+source asset per package. The catalog records the release URL and hash that
+`mu plugin install` verifies before it extracts, builds, and bundles a
+package. Keep `release_tag` in `catalog.source.json` equal to the tag you push,
+so the committed `catalog.json` matches the published one.
