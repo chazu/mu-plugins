@@ -51,7 +51,7 @@ jobs:
       # env_passthrough), so test them against a main pseudo-version.
       - name: Install mu
         run: |
-          go install github.com/chazu/mu/cmd/mu@v0.3.6-0.20261102012550-7275bda77a58
+          go install github.com/chazu/mu/cmd/mu@v0.3.6-0.20261102021016-cfaf887c24ec
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - name: Plugin discovery and fixtures
         run: bash scripts/test-plugins.sh
